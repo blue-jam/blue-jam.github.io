@@ -1,0 +1,98 @@
+<html>
+    <head>
+        <link href="prettify.css" type="text/css" rel="stylesheet" />
+        <link href="style.css" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="prettify.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <title>複数パターンの検索(Aho-Corasick法)</title>
+    </head>
+    <body onLoad="prettyPrint()">
+<h1>複数パターンの検索(Aho-Corasick法)</h1>
+<h2>説明</h2>
+<p>
+複数の文字列パターンについていったんTrie木を構築した後，KMP法を実行しながら失敗したときのリンクを作成する．これにより，複数の文字列についてのマッチングが同時に行えるパターンマッチングオートマトンが作成できる．
+</p>
+<h2>計算量</h2>
+<p>
+    <ul>
+        <li>PMAの構築:O(m)</li>
+        <li>パターンの検索:O(n+m)</li>
+    </ul>
+    * mはパターンの文字列の長さの総和．nは検索する文字列の長さ．
+</p>
+<h2>使用方法</h2>
+<p>
+    <ol>
+        <li>buildPMAを使ってPMAを構築する．</li>
+        <li>vectorの先頭が開始状態なのでそこから検索を開始．</li>
+        <li>出てくる文字に応じて状態を遷移させながら読み進めていき一致するものを探す．acceptの中に一致するパターンの番号が入っている．</li>
+    </ol>
+    パターンマッチングの状態を用いたDPがやりやすいように，各ノードにインデックスを持たせている．状態数は(パターンの数)*(文字列の長さ)でおおよそ見積もる．(必ず余裕は持たせる)
+</p>
+<h2>ソースコード</h2>
+<pre class="prettyprint">struct PMA{
+    int id;
+    PMA *next[0x100];       //next[0] is for fail
+    vector&lt;int&gt; accept;
+    PMA() { fill(next, next + 0x100, (PMA*)NULL); }
+};
+//Pattern Matching AutoMaton
+void buildPMA(vector&lt;string&gt; &amp;words, vector&lt;PMA*&gt; &amp;vp){
+    int n = words.size();
+    PMA *root = new PMA;    //createTrie
+    root -&gt; id = 0;
+    vp.push_back(root);
+    int count = 1;
+    for(int i = 0; i&lt;n; ++i){
+        PMA *v = root;
+        int m = words[i].size();
+        for(int j = 0; j &lt; m; ++j){
+            int c = words[i][j];
+            if(v -&gt; next[c] == NULL){
+                v -&gt; next[c] = new PMA;
+                v -&gt; next[c] -&gt; id = count++;
+                vp.push_back(v -&gt; next[c]);
+            }
+            v = v -&gt; next[c];
+        }
+        v -&gt; accept.push_back(i);
+    }
+    queue&lt;PMA*&gt; Q;          //make failure link
+    for(int c = 1; c &lt; 0x100; ++c){
+        if(root -&gt; next[c] != NULL){
+            root -&gt; next[c] -&gt; next[0] = root;
+            Q.push(root -&gt; next[c]);
+        } else root -&gt; next[c] = root;
+    }
+    while(!Q.empty()){
+        PMA *v = Q.front(); Q.pop();
+        for(int c = 1; c &lt; 0x100; ++c){
+            if(v -&gt; next[c] != NULL) 
+                Q.push(v -&gt; next[c]);
+            PMA *r = v -&gt; next[0];
+            while(r -&gt; next[c] == NULL) r = r -&gt; next[0];
+            if(v -&gt; next[c] != NULL)
+                v -&gt; next[c] -&gt; next[0] = r -&gt; next[c];
+            else
+                v -&gt; next[c] = r -&gt; next[c];
+        }
+        v -&gt; accept.insert(v -&gt; accept.end(), ALL(v -&gt; next[0] -&gt; accept));
+    }
+}
+</pre>
+<h2>確認済み問題</h2>
+<ul>
+    <li>RequiredSubstrings (SRM Div1 Medium) 文字列のインデックス，PMAの状態，出現したパターンの集合でDP．</li>
+</ul>
+<h2>参考</h2>
+<p>
+<ul>
+    <li>
+        <a href="http://www.prefield.com/algorithm/string/aho_corasick.html">Spaghetti Source</a>
+        <p>(ソースコードの参考．状態遷移の際に何回もリンク先へ飛ぶ必要がある，ほかの文字列を部分列として含んでいるときの対策がないといった点を改善した．また，DPを行いやすいように状態に一意のインデックスを割り振るようにした．
+        </p>
+    </li>
+</ul>
+</p>
+   </body>
+</html>
