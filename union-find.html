@@ -14,7 +14,6 @@
 </p>
 <h2>計算量</h2>
 <ul>
-    <li>初期化: O(n)</li>
     <li>併合，検索: O(1/A(n, n))(ならし計算量)</li>
 </ul>
 <p>
@@ -22,12 +21,38 @@
 </p>
 <h2>使用方法</h2>
 <p>
-initで要素数nのUnion-Find木の初期化．uniteで2つの集合を併合．sameで2つの要素が同一の集合に属するか調べる．
+はじめに要素数nのUnion-Find木の初期化．uniteで2つの集合を併合．sameで2つの要素が同一の集合に属するか調べる．
 </p>
 <h2>ソースコード</h2>
 <pre class="prettyprint">
+struct UnionFind{
+    vector&lt;int&gt; parent, rank;
+    UnionFind(int n){ parent = vector&lt;int&gt;(n, -1); rank = vector&lt;int&gt;(n, 0); }
+    int find(int x){
+        if(parent[x] == -1) return x;
+        else return (parent[x] = find(parent[x]));
+    }
+    bool unite(int x, int y){
+        x = find(x);
+        y = find(y);
+        if(x == y) return true;
+        if(rank[x] &lt; rank[y])
+            parent[y] = x;
+        else
+            parent[x] = y;
+        if(rank[x] == rank[y])
+            ++rank[x];
+        return false;
+    }
+    bool same(int x, int y){
+        return find(x) == find(y);
+    }
+};
 </pre>
 <h2>確認済み問題</h2>
+<ul>
+    <li>POJ 1182</li>
+</ul>
 <h2>参考</h2>
 <ul>
     <li>プログラミングコンテストチャレンジブック(p81-p86)
