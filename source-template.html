@@ -13,7 +13,7 @@
 コーディングをはじめる前にコピーしたりすると便利．
 </p>
 <p>
-マクロはあまり多用しないので，ALL(x)のみ．ALL(x)は(x).begin(),(x).end()に置き換えられる．vector vに対してsort(ALL(v))などと使う．
+マクロはあまり多用しないので，EACH(i, c)とALL(x)のみ．EACHは，イテレータを持つデータ構造のすべての要素について処理を行うことができる．ALL(x)は(x).begin(),(x).end()に置き換えられる．vector vに対してsort(ALL(v))などと使う．typeof演算子はPOJだと使えないので注意．
 </p>
 <h2>ソースコード</h2>
 <pre class="prettyprint">
@@ -37,6 +37,7 @@
 #include &lt;utility&gt; 
 #include &lt;vector&gt; 
 
+#define EACH(i,c) for(typeof((c).begin()) i=(c).begin(); i!=(c).end(); ++i)
 #define ALL(x) (x).begin(),(x).end() 
 using namespace std; 
 const double eps = 1e-10;
