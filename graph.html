@@ -1,0 +1,52 @@
+<html>
+    <head>
+        <link href="prettify.css" type="text/css" rel="stylesheet" />
+        <link href="style.css" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="prettify.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>グラフの要素</title>
+    </head>
+    <body onLoad="prettyPrint()">
+<h1>グラフの要素</h1>
+<h2>説明</h2>
+<p>
+グラフは各頂点から出て行く辺をリストとして保持する隣接リスト表現と各頂点間に辺が存在する情報を記録する隣接行列表現がある．それぞれ利点があるので状況に応じて使い分けること．
+</p>
+<ul>
+    <li>隣接リスト：頂点を基準に考えればいいときに有向．重複辺も扱える．</li>
+    <li>隣接行列：O(E)がO(V^2)になる．密グラフや，頂点数が少ないグラフについて効率よく扱える．重複辺を扱いにくい．</li>
+</ul>
+</p>
+<h2>ソースコード</h2>
+<pre class="prettyprint">
+typedef int Weight;
+struct Edge{
+    int from, to;
+    Weight weight;
+    Edge(int from, int to, Weight weight) :
+        from(from), to(to), weight(weight) { }
+};
+bool operator &lt; (const Edge &amp;a, const Edge &amp;b){
+    if(a.weight != b.weight) return a.weight &gt; b.weight;
+    if(a.from != b.from) return a.from &gt; b.from;
+    return  a.to &gt; b.to;
+}
+typedef vector&lt;Edge&gt; Edges;
+typedef vector&lt;Edges&gt; Graph;
+
+typedef vector&lt;Weight&gt; Array;
+typedef vector&lt;Array&gt; Matrix;
+</pre>
+<p>
+Edgeのless演算子のオーバーロードで，大きいほうが左辺のときにtrueを返すようにしている．これはpriority_queueで，weightの小さいほうを先に取り出すときの工夫である．
+気に入らない場合は，greater演算子をオーバーロードし，priority_queueを以下のように宣言する．
+</p>
+<pre class="prettyprint">
+priority_queue&lt;Edge&gt;, vector&lt;Edge&gt;, greater&lt;Edge&gt; &gt; Q;
+</pre>
+<h2>参考</h2>
+<ul>
+    <li><a href="http://www.prefield.com/algorithm/graph/graph.html">Spaghetti Source</a></li>
+</ul>
+   </body>
+</html>
