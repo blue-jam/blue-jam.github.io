@@ -1,0 +1,79 @@
+<html>
+    <head>
+        <link href="prettify.css" type="text/css" rel="stylesheet" />
+        <link href="style.css" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="prettify.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>単一始点最短路(Dijkstra)</title>
+    </head>
+    <body onLoad="prettyPrint()">
+<h1>単一始点最短路(Dijkstra)</h1>
+<h2>説明</h2>
+<p>
+始点の距離を0とし，近いところから順番に距離を確定していく．負の辺が存在しないグラフのある頂点からすべての頂点に対しての最短距離を求めることができる．
+</p>
+<p>
+経路復元では，目的地から直前の頂点をたどることで，経路の逆順を復元している．
+</p>
+<h2>計算量</h2>
+<ul>
+    <li>O(E log V)</li>
+</ul>
+<h2>使用方法</h2>
+<p>
+グラフを生成し，距離情報を与えたい配列と節点の直前の位置を記録するための配列を渡すだけ．
+経路の復元には，接点の直前の位置を記録した配列と目的の頂点を渡す．
+</p>
+<dl>
+    <dt>Graph g</dt>
+    <dd>グラフ</dd>
+    <dt>int s</dt>
+    <dd>始点</dd>
+    <dt>vector&lt;Weight&gt; dist</dt>
+    <dd>最短距離を格納．頂点数と同じ要素数．</dd>
+    <dt>vector&lt;int&gt; prev</dt>
+    <dd>直前の頂点を格納．頂点数と同じよう素数．</dd>
+    <dt>int t</dt>
+    <dd>経路を復元したいときの目的地</dd>
+</dl>
+<h2>ソースコード</h2>
+<pre class="prettyprint">
+void dijkstra(const Graph &amp;g, int s, vector&lt;Weight&gt; &amp;dist, vector&lt;int&gt; &amp;prev){
+    int n = g.size();
+    dist.assign(n, INF);
+    dist[s] = 0;
+    prev.assign(n, -1);
+    priority_queue&lt;Edge&gt; Q;     // a &lt; b &lt;-&gt; a.weight &gt; b.weight
+    Q.push(Edge(-2, s, 0));
+    while(!Q.empty()){
+        Edge e = Q.top(); Q.pop();
+        if(prev[e.to] != -1) continue;
+        prev[e.to] = e.from;
+        EACH(i, g[e.to]){
+        //for(Edges::const_iterator i=g[e.to].begin(); i!=g[e.to].end(); ++i){    //マクロが使えないとき
+            if(dist[i -&gt; to] &gt; dist[i -&gt; from] + i -&gt; weight){
+                dist[i -&gt; to] = dist[i -&gt; from] + i -&gt; weight;
+                Q.push(Edge(i -&gt; from, i -&gt; to, dist[i -&gt; to]));
+            }
+        }
+    }
+}
+vector&lt;int&gt; buildPath(const vector&lt;int&gt; &amp;prev, int t){
+    vector&lt;int&gt; path;
+    for(int v = t; v &gt;= 0; v = prev[v])
+        path.push_back(v);
+    reverse(path.begin(), path.end());
+    return path;
+}
+</pre>
+<h2>確認済み問題</h2>
+<ul>
+    <li>POJ 3268</li>
+    <li>経路復元は行っていない</li>
+</ul>
+<h2>参考</h2>
+<ul>
+    <li><a href="http://www.prefield.com/algorithm/graph/dijkstra.html">Spaghetti Source</a> 変数名以外はそのまま</li>
+</ul>
+   </body>
+</html>
