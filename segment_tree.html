@@ -1,0 +1,89 @@
+<html>
+    <head>
+        <link href="prettify.css" type="text/css" rel="stylesheet" />
+        <link href="style.css" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="prettify.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>Segment Tree</title>
+    </head>
+    <body onLoad="prettyPrint()">
+<h1>Segment Tree</h1>
+<h2>説明</h2>
+<p>
+区間を扱う問題に強い効果を発揮するデータ構造．完全二分木であり，各接点は区間を管理する．根は区間全体，その子は半分ずつを管理，．．．葉は1つの要素を管理となる．n個の要素があるとき，区間についての操作をO(n)でできる．
+</p>
+<p>
+Range Minimum Queryや，DPの高速化に利用される．
+</p>
+<h2>計算量</h2>
+<ul>
+    <li>初期化: O(n)</li>
+    <li>更新，問い合わせ： O(log n)
+    <li>空間計算量： O(n)
+</ul>
+<h2>使用方法</h2>
+<p>
+初期化では，構成に必要な節点が作成され，無視のできるデータで埋められる．initで，配列に対応したデータへの初期化がなされ，updateでは，節点へのデータの更新が行われる．queryでは，半開区間[a, b)についての問い合わせが行われる．
+</p>
+<h2>ソースコード</h2>
+<p>
+POJ 3264 のRMQに使用した．最大値と最小値を計算する必要があるため，pairで計算している．
+<pre class="prettyprint">
+typedef pair&lt;int, int&gt; Data;                    //データの型
+const Data Ignore_Data = make_pair(INT_MAX, 0); //無視するデータ
+
+struct SegmentTree{
+    int n;                  //要素数(2^x)
+    vector&lt;Data&gt; dat;       //データの配列
+    SegmentTree(int n_){
+        for(n = 1; n &lt; n_; n *= 2);
+        dat = vector&lt;Data&gt;(n * 2 - 1, Ignore_Data);
+    }
+    Data init(vector&lt;Data&gt; &amp;v){
+        for(int i = 0; i &lt; v.size(); ++i){
+            dat[i + n - 1] = v[i];          //葉の要素に直接書き込む
+        }
+        for(int k = n - 2; k &gt;= 0; --k){    //上に上りながら計算
+            dat[k].first = min(dat[k * 2 + 1].first, dat[k * 2 + 2].first);
+            dat[k].second = max(dat[k * 2 + 1].second, dat[k * 2 + 2].second);
+        }
+    }
+    void update(int k, Data d){
+        k += n - 1;         //葉の接点
+        dat[k] = d;
+        while(k &gt; 0){       //上りながら更新
+            k = (k - 1) / 2;
+            /* 以下を適切な処理に書き換える． */
+            dat[k].first = min(dat[k * 2 + 1].first, dat[k * 2 + 2].first);
+            dat[k].second = max(dat[k * 2 + 1].second, dat[k * 2 + 2].second);
+        }
+    }
+    //l, rは処理を簡潔にするための区間を表す引数とした．
+    Data get(int a, int b, int k, int l, int r){
+        if(b &lt;= l || r &lt;= a)
+            return Ignore_Data;     //区間が交差しない
+        if(a &lt;= l &amp;&amp; r &lt;= b){
+            return dat[k];          //区間が完全に含まれる
+        }
+        else{
+            Data vl = get(a, b, k * 2 + 1, l, (l + r) / 2);
+            Data vr = get(a, b, k * 2 + 2, (l + r) / 2, r);
+            /* 以下を適切な処理に書き換える */
+            return make_pair(min(vl.first, vr.first), max(vl.second, vr.second));
+        }
+    }
+    Data query(int a, int b){
+        return get(a, b, 0, 0, n);
+    }
+};
+</pre>
+<h2>確認済み問題</h2>
+<ul>
+    <li>POJ 3264</li>
+</ul>
+<h2>参考</h2>
+<ul>
+    <li>プログラミングコンテストチャレンジブック(p153-p158)</li>
+</ul>
+   </body>
+</html>
