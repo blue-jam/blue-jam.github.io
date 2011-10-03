@@ -1,0 +1,98 @@
+<html>
+    <head>
+        <link href="prettify.css" type="text/css" rel="stylesheet" />
+        <link href="style.css" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="prettify.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>単一始点最短路問題(Bellman-Ford)</title>
+    </head>
+    <body onLoad="prettyPrint()">
+<h1>単一始点最短路問題(Bellman-Ford)</h1>
+<h2>説明</h2>
+<p>
+Bellman-Fordのアルゴリズムは，始点を距離0，そのほかを距離INFに設定したうえで，距離が求められている頂点から辺を伸ばし，既存の距離よりも短ければ距離を更新するという操作を繰り返し実行することで最短路を求めるアルゴリズムである．Dijkstraが負の辺を扱えないのに対し，こちらは負の辺を扱える．
+</p>
+<p>
+また，負の閉路が存在しなければそれぞれの頂点を最大でも1回ずつしか通らないので，高々V-1回のループで終わることがわかっている．V回目のループで更新が起こった場合は負の閉路があることがわかるので，負の閉路の検出にも利用される．しかし，負の閉路があったからといってそれが目的の頂点への最短路に影響を与えるとは限らないので注意が必要である．(例：AOJ 1169)
+</p>
+<h2>計算量</h2>
+<ul>
+    <li>O(VE)</li>
+</ul>
+<h2>使用方法</h2>
+<dl>
+    <dt>Graph g</dt><dd>最短路を求めたいグラフ</dd>
+    <dt>int s</dt><dd>始点</dd>
+    <dt>vector&lt;Weight&gt; dist</dt><dd>距離を記録する．経路がない場合はINF，そこへ到達するまでに負の閉路が含まれることがわかっていれば-1</dd>
+    <dt>prev&lt;int&gt; prev</dt><dd>経路復元用の1つ前の位置を示す配列</dd>
+    <dt>int t</dt><dd>経路を復元したい時の目的地</dd>
+    <dt>bellmanFordの戻り値</dt><dd>負の閉路が含まれているか</dd>
+</dl>
+<p>
+bellmanFordでは最短路を計算する．buildPathはDijkstraと共通で最短路を復元する．ただし，到達できない場合も戻り値は帰ってくるので注意が必要．findNagativeRoopは，Graphの全域において負の閉路があるか検出する．
+</p>
+<p>
+bellmanFordにおいて，distに-INFと記録された頂点以外にも，負の閉路の影響を受ける頂点があることがある．-INFと記録された頂点から到達できるすべての頂点は負の閉路の影響を受ける．（要確認）
+</p>
+<h2>ソースコード</h2>
+<pre class="prettyprint">
+bool bellmanFord(const Graph &amp;g, int s, vector&lt;Weight&gt; &amp;dist, vector&lt;int&gt; &amp;prev){
+    int n = g.size();
+    bool nagativeRoop = false;
+    dist.assign(n, INF); dist[s] = 0;
+    prev.assign(n, -1);
+    for(int k = 0; k &lt; n; ++k){
+        for(int v = 0; v &lt; n; ++v){
+            EACH(i, g[v]){
+            //for(Edges::const_iterator i=g[v].begin(); i != g[v].end(); ++i){
+                if(dist[i -&gt; from] != INF &amp;&amp; dist[i -&gt; to] &gt; dist[i -&gt; from] + i -&gt; weight){
+                    dist[i -&gt; to] = dist[i -&gt; from] + i-&gt; weight;
+                    prev[i -&gt; to] = i -&gt; from;
+                    if(k == n - 1){
+                        dist[i -&gt; to] = -INF;
+                        nagativeRoop = true;
+                    }
+                }
+            }
+        }
+    }
+    return nagativeRoop;
+}
+bool findNegativeRoop(const Graph &amp;g){
+    int n = g.size();
+    vector&lt;Weight&gt; dist(n, 0);
+    for(int k = 0; k &lt; n; ++k){
+        for(int v = 0; v &lt; n; ++v){
+            EACH(i, g[v]){
+            //for(Edges::const_iterator i=g[v].begin(); i != g[v].end(); ++i){
+                if(dist[i -&gt; to] &gt; dist[i -&gt; from] + i -&gt; weight){
+                    dist[i -&gt; to] = dist[i -&gt; from] + i -&gt; weight;
+                    if(v == n - 1) return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+vector&lt;int&gt; buildPath(const vector&lt;int&gt; &amp;prev, int t){
+    vector&lt;int&gt; path;
+    for(int v = t; v &gt;= 0; v = prev[v])
+        path.push_back(v);
+    reverse(path.begin(), path.end());
+    return path;
+}
+</pre>
+<h2>確認済み問題</h2>
+<ul>
+    <li>POJ 3169(Layout)</li>
+</ul>
+<p>
+最短路の計算のみしか行っていない．経路の復元と，負の閉路の検出は今後．
+</p>
+<h2>参考</h2>
+<ul>
+    <li><a href="http://www.prefield.com/algorithm/graph/bellman_ford.html">Spaghetti Source</a></li>
+    <li>プログラミングコンテストチャレンジブック(p95-p96)</li>
+</ul>
+   </body>
+</html>
