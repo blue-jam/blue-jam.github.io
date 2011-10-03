@@ -23,6 +23,11 @@
 <p>
 はじめに要素数nのUnion-Find木の初期化．uniteで2つの集合を併合．sameで2つの要素が同一の集合に属するか調べる．
 </p>
+<dl>
+    <dt>UnionFind(int n)</dt><dd>要素数nのUnion-Find木の初期化．</dd>
+    <dt>unite(int x, int y)</dt><dd>xとyの所属する集合を併合．trueなら併合成功．falseなら，すでに同じ集合</dd>
+    <dt>same(int x, int y)</dt><dd>xとyの所属する集合が同じかどうか調べる．</dd>
+</dl>
 <h2>ソースコード</h2>
 <pre class="prettyprint">
 struct UnionFind{
@@ -35,14 +40,14 @@ struct UnionFind{
     bool unite(int x, int y){
         x = find(x);
         y = find(y);
-        if(x == y) return true;
+        if(x == y) return false;
         if(rank[x] &lt; rank[y])
             parent[y] = x;
         else
             parent[x] = y;
         if(rank[x] == rank[y])
             ++rank[x];
-        return false;
+        return true;
     }
     bool same(int x, int y){
         return find(x) == find(y);
