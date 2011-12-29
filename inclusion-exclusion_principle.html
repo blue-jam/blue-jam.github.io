@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <link href="prettify.css" type="text/css" rel="stylesheet" />
+        <link href="style.css" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="prettify.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>包除原理</title>
+    </head>
+    <body onLoad="prettyPrint()">
+<h1>包除原理</h1>
+<h2>説明</h2>
+<p>
+和集合の要素数を計算する時に使える原理．
+</p>
+<p>
+Ai(1 &lt; i &lt; N)のN個の集合からなる和集合の要素数を計算するには，すべての集合の組み合わせについて，選んだ集合の個数が奇数のとき積集合の要素数を足し合わせ，選んだ集合の数が偶数のとき積集合の要素数を引く．
+</p>
+<p>
+集合の数が少ないときに有効．特殊な条件化では，全通り計算する必要がなかったり，DPで計算できたりするらしい．
+</p>
+<h2>計算量</h2>
+<p>
+集合の数をnとすると O(2^n) (これに積集合を計算する計算量がかかる)
+</p>
+<h2>使用方法</h2>
+<p>
+AOJ1076で使用したソースを例として記載する．このコードがそのまま使えるわけではない．
+</p>
+<p>
+最小公倍数を計算しているのは，積集合を求めるための処理であるから，包除原理の本質的な部分でない．
+(n + t) * (n / t) / 2，(n / t)も積集合を求める計算である．
+</p>
+<h2>ソースコード</h2>
+<pre class="prettyprint">
+    ll time, all;
+    time = all = 0LL;
+    for(int s = 1; s &lt; (1 &lt;&lt; m); ++s){
+        ll t = 1, bc = 0;
+        for(int i = 0; i &lt; m; ++i){
+            if(((s &gt;&gt; i) &amp; 1) != 0){
+                t = lcm(t, p[i]);
+                ++bc;
+            }
+        }
+        time += (bc % 2 == 0 ? -1: 1) * (n + t) * (n / t) / 2;
+        all += (bc % 2 == 0 ? -1: 1) * (n / t);
+    }
+</pre>
+<h2>確認済み問題</h2>
+<ul>
+    <li>AOJ 1076</li>
+</ul>
+<h2>参考</h2>
+<ul>
+    <li>プログラミングコンテストチャレンジブック(p246, 247)</li>
+</ul>
+   </body>
+</html>

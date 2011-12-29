@@ -35,10 +35,11 @@ int n, m;
 ll p[30];
 
 void solve(){
-    ll time, all;
+    ll time;
+    ll all;
     time = 0;
     all = 0;
-    for(int s = 0; s < (1 << m); ++s){
+    for(int s = 1; s < (1 << m); ++s){
         ll t = 1, bc = 0;
         for(int i = 0; i < m; ++i){
             if(((s >> i) & 1) != 0){
@@ -46,9 +47,11 @@ void solve(){
                 ++bc;
             }
         }
-        time += (bc % 2 == 0 ? 1: -1) * (n + t) * (n / t) / 2;
-        all += (bc % 2 == 0 ? 1: -1) * (n / t);
+        time += (bc % 2 == 0 ? -1: 1) * (n + t) * (n / t) / 2;
+        all += (bc % 2 == 0 ? -1: 1) * (n / t);
     }
+    time = (long long)n * (n + 1) / 2 - time;
+    all = n - all;
     double res = (double)time / all;
     if(all == 0)
         res = 0.0;
