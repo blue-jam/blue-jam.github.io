@@ -1,0 +1,52 @@
+<html>
+    <head>
+        <link href="prettify.css" type="text/css" rel="stylesheet" />
+        <link href="style.css" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="prettify.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>エラトステネスの篩</title>
+    </head>
+    <body onLoad="prettyPrint()">
+<h1>エラトステネスの篩</h1>
+<h2>説明</h2>
+<p>
+素数を列挙する方法としてよく用いる方法．試し割りを行うより高速．
+</p>
+<h2>計算量</h2>
+<p>
+O(n log log n)程度
+</p>
+<h2>使用方法</h2>
+<p>
+[0, n)の範囲の素数を列挙する．
+</p>
+<dl>
+    <dt>long long n</dt><dd>区間を表す正整数．半開区間であることに注意</dd>
+    <dt>vector<ll> &amp;prime</dt><dd>素数を格納するvector．空であることが望ましい．</dd>
+    <dt>返り値 vector&lt;int&gt; isPrime</dt><dd>isPrime[i] != 0であればiは素数</dd>
+</dl>
+<h2>ソースコード</h2>
+<pre class="prettyprint">
+vector&lt;int&gt; sieve_of_eratosthenes(ll n, vector&lt;ll&gt; &amp;prime){
+    vector&lt;int&gt; isPrime(n);
+    for(ll i = 2; i &lt; n; ++i)
+        isPrime[i] = i;
+    for(ll i = 2; i &lt; n; ++i)
+        if(isPrime[i]){
+            prime.push_back(i);
+            for(ll j = i * i; j &lt; n; j += i)
+                isPrime[j] = 0; 
+        }
+    return isPrime;
+}
+</pre>
+<h2>確認済み問題</h2>
+<ul>
+    <li>AOJ 1232</li>
+</ul>
+<h2>参考</h2>
+<ul>
+    <li>プログラミングコンテストチャレンジブック(p122,123)
+</ul>
+   </body>
+</html>
