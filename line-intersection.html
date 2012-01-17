@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <link href="prettify.css" type="text/css" rel="stylesheet" />
+        <link href="style.css" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="prettify.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>直線，線分の交差判定，交点計算</title>
+    </head>
+    <body onLoad="prettyPrint()">
+<h1>直線，線分の交差判定，交点計算</h1>
+<h2>説明</h2>
+<p>
+線分の交点計算は，2つの直線a，bが与えられたとき，直線bからa[0]，a[1]への距離を計算し，それぞれd1，d2とする．交点をP，a[0]，a[1]から直線bに垂線を下した交点をそれぞれH1，H2とすると，a[0]，H1，Pからなる三角形と，a[1]，H2，Pからなる三角形は掃除であるから，a[0]からPへのベクトルは(a[1] - a[0]) * d1 / (d1 + d2)となる．
+</p>
+<p>
+直線の交点計算については簡単である．ベクトルa，bで表される直線とベクトルc，dで表される直線が与えられたとき，cross(b - a, d - c)が0であれば，2つの直線は平行であるから，重なっていない限り交差はしない．
+</p>
+<h2>使用方法</h2>
+<h3>intersection_ls</h3><p>線分の交点計算．線分が交わることが前提．</p>
+<h2>ソースコード</h2>
+<pre class="prettyprint">
+P intersection_ls(const Line &amp;a, const Line &amp;b){
+    P vb = b[1] - b[0];
+    double d1 = abs(cross(vb, a[0] - b[0]));
+    double d2 = abs(cross(vb, a[1] - b[0]));
+    double t = d1 / (d1 + d2);
+    return a[0] + (a[1] - a[0]) * t;
+}
+</pre>
+<h2>確認済み問題</h2>
+<ul>
+    <li>AOJ 1226(intersection_ls)</li>
+</ul>
+<h2>参考</h2>
+<ul>
+    <li><a href="http://www.deqnotes.net/">deq notes</a></li>
+</ul>
+   </body>
+</html>
