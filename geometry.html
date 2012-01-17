@@ -1,0 +1,106 @@
+<html>
+    <head>
+        <link href="prettify.css" type="text/css" rel="stylesheet" />
+        <link href="style.css" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="prettify.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>平面幾何の要素</title>
+    </head>
+    <body onLoad="prettyPrint()">
+<h1>平面幾何の要素</h1>
+<h2>説明</h2>
+<h3>浮動小数の誤差について</h3>
+<p>
+平面幾何の問題を計算するときは浮動小数の演算が必要となることが多く，答えの出力の際に誤差が許容されていたり，計算の際にどれぐらいの誤差を0とみてよいかなどが与えられることが多い．
+</p>
+<p>
+このライブラリでは，すごく小さい数としてEPSを定義し判定などで使用する．この値の設定は問題に応じて適切に変更すること．
+</p>
+
+<h3>点の表現</h3>
+<p>
+数多くのC++の競技プログラミング用ライブラリでは，complex型を使用することが多い．
+</p>
+<p>
+その理由としては，
+<ul>
+    <li>宣言が楽（typedef complex&lt;double&gt; P;で終わる）</li>
+    <li>絶対値の定義や数値の掛け算などの定義がなされていること</li>
+</ul>
+が主な理由として挙げられる．
+</p>
+<p>
+x座標は実数値，y座標は虚数値として扱うので，x座標を取得するときはp.real()，real(p)，y座標を取得するときはp.imag()，imag(p)とする．
+</p>
+<p>
+operator&lt; では，x座標が小さい方を小さいものとして，x座標が等しいときはy座標が小さい方を小さいものとしている．
+</p>
+<h3>直線，線分</h3>
+<p>
+直線は通る2点，線分は2つの端点を用いて表現する．vector&lt;P&gt; を継承するので，以下の2点が利点として得られる．
+<ul>
+    <li>辞書順の比較ができる</li>
+    <li>点に添え字を用いてアクセスできる</li>
+</ul>
+</p>
+<p>
+半直線は出てくることが少ないので，詳細は説明しないが，ライブラリで行っていることを理解すれば，必要なときに実装できるはず．
+</p>
+<h3>辺の交差のない多角形</h3>
+<p>
+vector&lt;P&gt;で表す．点を格納する向きは反時計回りとする．
+</p>
+<h3>円</h3>
+<p>
+円は中心と半径を用いて表す．
+</p>
+<h2>使用方法</h2>
+<p>
+特に記述しない．Lineのコンストラクタは一個減らしてもいい気がするが．
+</p>
+<p>
+conjはcomplexの共役なものを返す関数である．
+</p>
+<p>
+conj(a) * b = (real(a) - i imag(a)) * (real(b) - i imag(b)) = (real(a) * real(b) + imag(a) * imag(b)) + i (real(a) * imag(b) - imag(a) * real(b)) となる．
+</p>
+<h2>ソースコード</h2>
+<pre class="prettyprint">
+const double INF = 1e-9;
+
+typedef complex&lt;double&gt; P;
+
+bool operator &lt; (const P &amp;a, const P &amp;b){
+    return a.real() != b.real() ? a.real() &lt; b.real() : a.imag() &lt; b.imag();
+}
+double dot(const P &amp;a, const P &amp;b){
+    return real(conj(a) * b);
+}
+double cross(const P &amp;a, const P &amp;b){
+    return imag(conj(a) * b);
+}
+
+struct Line : public vector&lt;P&gt; {
+    Line(const P &amp;a, const P &amp;b) {
+        push_back(a); push_back(b);
+    }
+    Line(double x1, double y1, double x2, double y2){
+        push_back(P(x1, y1));
+        push_back(P(x2, y2));
+    }
+};
+
+typedef vector&lt;P&gt; Polygon;
+
+struct Circle{
+    P p; double r;
+    Circle(const P &amp;p, double r) : p(p), r(r) { }
+};
+</pre>
+<h2>参考</h2>
+<ul>
+    <li><a href="http://www.deqnotes.net/">deq notes</a>(平面幾何の解説が詳しい)</li>
+    <li><a href="http://www.prefield.com/">Spaghetti Source</a></li>
+</ul>
+   </body>
+</html>
