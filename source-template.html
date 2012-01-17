@@ -37,7 +37,7 @@
 #include &lt;utility&gt; 
 #include &lt;vector&gt; 
 
-#define EACH(i,c) for(typeof((c).begin()) i=(c).begin(); i!=(c).end(); ++i)
+#define EACH(i,c) for(__typeof((c).begin()) i=(c).begin(); i!=(c).end(); ++i)
 #define ALL(x) (x).begin(),(x).end() 
 using namespace std; 
 typedef long long ll;
