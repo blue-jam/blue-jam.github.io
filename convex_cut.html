@@ -1,0 +1,50 @@
+<html>
+    <head>
+        <link href="prettify.css" type="text/css" rel="stylesheet" />
+        <link href="style.css" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="prettify.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>凸多角形の切断</title>
+    </head>
+    <body onLoad="prettyPrint()">
+<h1>凸多角形の切断</h1>
+<h2>説明</h2>
+<p>
+与えられた多角形の直線に対して左側を切除し，右側部分を残す．
+</p>
+<p>
+多角形は反時計回りに点が格納されているものとする．
+</p>
+<h2>計算量</h2>
+<p>
+N角形に対してO(N)
+</p>
+<h2>使用方法</h2>
+<p>
+右側を切除したい場合は，if(ccwl[0], l[1], curr) != 1))の1を-1に置き換える．
+</p>
+<h2>ソースコード</h2>
+<pre class="prettyprint">
+Polygon convex_cut(const Polygon &amp;p, const Line &amp;l){
+    Polygon res;
+    for(int i = 0; i &lt; p.size(); ++i){
+        P curr = p[i];
+        P next = p[(i + 1) % p.size()];
+        Line tl = Line(curr, next);
+        if(ccw(l[0], l[1], curr) != 1) res.push_back(curr);
+        if(ccw(l[0], l[1], curr) * ccw(l[0], l[1], next) &lt; 0)
+            res.push_back(intersection(Line(curr, next), l));
+    }
+    return res;
+}
+</pre>
+<h2>確認済み問題</h2>
+<ul>
+    <li>AOJ 1283</li>
+</ul>
+<h2>参考</h2>
+<ul>
+    <li><a href="http://www.prefield.com/">Spaghetti Source</a></li>
+</ul>
+   </body>
+</html>
