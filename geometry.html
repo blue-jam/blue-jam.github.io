@@ -79,10 +79,6 @@ struct Line : public vector&lt;P&gt; {
     Line(const P &amp;a, const P &amp;b) {
         push_back(a); push_back(b);
     }
-    Line(double x1, double y1, double x2, double y2){
-        push_back(P(x1, y1));
-        push_back(P(x2, y2));
-    }
 };
 
 typedef vector&lt;P&gt; Polygon;
