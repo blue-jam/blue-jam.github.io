@@ -1,0 +1,37 @@
+<html>
+    <head>
+        <link href="prettify.css" type="text/css" rel="stylesheet" />
+        <link href="style.css" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="prettify.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>点の進行方向の判定</title>
+    </head>
+    <body onLoad="prettyPrint()">
+<h1>点の進行方向の判定</h1>
+<h2>説明</h2>
+<p>
+3点a,b,cをa-&gt;b-&gt;cの順番で進むときに，反時計方向に進む（b-aの左側方向へ進む）か，時計方向に進む（b-aの右側の方向へ進む）か判定する．
+</p>
+<h2>使用方法</h2>
+<p>
+3点を与える．反時計方向であれば1，時計方向であれば-1，平行であれば0を返す．
+</p>
+<h2>ソースコード</h2>
+<pre class="prettyprint">
+int ccw(P a, P b, P c){
+    P ab = b - a, ac = c - a;
+    if(cross(ab, ac) &gt; eps)     return +1;      //counter clockwise
+    if(cross(ab, ac) &lt; -eps)    return -1;      //clockwise
+    return 0;                                   //parallel
+}
+</pre>
+<h2>確認済み問題</h2>
+<ul>
+    <li>AOJ 1283</li>
+</ul>
+<h2>参考</h2>
+<ul>
+    <li><a href = "http://www.prefield.com/">Spaghetti Source</a></li>
+</ul>
+   </body>
+</html>
