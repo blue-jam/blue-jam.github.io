@@ -1,0 +1,96 @@
+<html>
+    <head>
+        <link href="prettify.css" type="text/css" rel="stylesheet" />
+        <link href="style.css" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="prettify.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>Lowest Common Ancestor(二分探索)</title>
+    </head>
+    <body onLoad="prettyPrint()">
+<h1>Lowest Common Ancestor(二分探索)</h1>
+<h2>説明</h2>
+<p>
+ 根付き木に対し，その2頂点u,vの共通の祖先で最も近いところにあるものを求める．ここではダブリングを用いて2^k個ずつさかのぼることで求めている．
+</p>
+<p>
+ 同じ高さまで上ったのち，LCA以上まで上ってしまう場合は上らず，LCAより低い位置ならそこまで上る．最終的にLCAの1個下まで到達するはずなので，片方の親がLCAとなっている．
+</p>
+<h2>計算量</h2>
+<p>
+頂点数をnとする．
+</p>
+<dl>
+    <dt>初期化</dt><dd>O(n log n)</dd>
+    <dt>クエリへの応答</dt><dd>O(log n)</dd>
+</dl>
+<h2>使用方法</h2>
+<p>
+initLCAで初期化する．木の親節点の情報をparentに保存する．ancestorには出力先のvectorを渡す．また，別に深さのvectorを作っておく．dijkstraを使ったのは1例に過ぎない．頂点数がそんなに多くない場合は再帰で，多い場合はstackを使って．
+クエリを渡すときは，2つの頂点の番号と深さの情報，初期化で使用したvectorを渡す．
+</p>
+<dl>
+    <dt>vector&lt;int&gt; parent</dt>
+        <dd>親の節点，ない場合は-1</dd>
+    <dt>vector&lt;vector&lt;int&gt; &gt; ancestor</dt>
+        <dd>ダブリングで使用するvector</dd>
+    <dt>int u</dt>
+        <dd>頂点番号その1</dd>
+    <dt>int v</dt>
+        <dd>頂点番号その2</dd>
+    <dt>vector&lt;int&gt; depth</dt>
+        <dd>よそで計算した深さ．親が0．</dd>
+</dl>
+<h2>ソースコード</h2>
+<pre class="prettyprint">
+void calcDepth(const Graph &amp;g, int s, vector&lt;int&gt; &amp;depth){
+    vector&lt;int&gt; prev(g.size());
+    dijkstra(g, s, depth, prev);
+}
+
+void initLCA(vector&lt;int&gt; &amp;parent, vector&lt;vector&lt;int&gt; &gt; &amp;ancestor){
+    int n = parent.size();
+    int tn = 1;
+    int maxLog = 0;
+    for(maxLog = 0; tn &lt; n; ++maxLog) tn *= 2;
+    ancestor.resize(maxLog, vector&lt;int&gt;(n, -1));
+    if(maxLog == 0) return;         //頂点が1個の時の処理．急遽付け加えたため確認はされていないので注意．
+    for(int i = 0; i &lt; n; ++i)
+        ancestor[0][i] = parent[i];
+    for(int i = 0; i + 1 &lt; maxLog; ++i){
+        for(int j = 0; j &lt; n; ++j){
+            if(ancestor[i][j] &lt; 0)
+                ancestor[i + 1][j] = -1;
+            else
+                ancestor[i + 1][j] = ancestor[i][ancestor[i][j]];
+        }
+    }
+}
+
+int lowestCommonAncestor(int u, int v, vector&lt;int&gt; &amp;depth, vector&lt;vector&lt;int&gt; &gt; &amp;ancestor){
+    int maxLog = ancestor.size();
+    if(depth[u] &gt; depth[v]) swap(u, v);
+    for(int k = 0; k &lt; maxLog; ++k){
+        if((depth[v] - depth[u]) &gt;&gt; k &amp; 1){
+            v = ancestor[k][v];
+        }
+    }
+    if(u == v) return u;
+    for(int k = maxLog - 1; k &gt;= 0; --k){
+        if(ancestor[k][u] != ancestor[k][v]){
+            u = ancestor[k][u];
+            v = ancestor[k][v];
+        }
+    }
+    return ancestor[0][u];
+}
+</pre>
+<h2>確認済み問題</h2>
+<ul>
+    <li>AOJ 0575</li>
+</ul>
+<h2>参考</h2>
+<ul>
+    <li>プログラミングコンテストチャレンジブック(p.274-p.276)</li>
+</ul>
+   </body>
+</html>
