@@ -1,0 +1,72 @@
+<html>
+    <head>
+        <link href="prettify.css" type="text/css" rel="stylesheet" />
+        <link href="style.css" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="prettify.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>最大流(Dinitz)</title>
+    </head>
+    <body onLoad="prettyPrint()">
+<h1>最大流(Dinitz)</h1>
+<h2>説明</h2>
+<p>
+多くの文献で"Dinic"として紹介されているが，原論文を英訳するときに著者名がそう訳されたためそちらが広まっただけで，その後の自著では"Dinitz"と表記されている．
+</p>
+<p>
+ネットワークをBFSで層別ネットワークに分け，その中での極大フローを探し，増加させることを繰り返し最大流量を求める．
+</p>
+<h2>計算量</h2>
+<ul>
+    <li>O(V^2 E)</li>
+</ul>
+<h2>使用方法</h2>
+<p>Ford-Fulkersonと同様にネットワークとソース，シンクの頂点を渡す．グラフを構築するときに逆辺を付け忘れないように．</p>
+<h2>ソースコード</h2>
+<pre class="prettyprint">
+Weight blockingFlow(Graph &amp;g, vector&lt;int&gt; &amp;l, int v, int t, Weight f){
+    if(v == t) return f;
+    EACH(i, g[v]){
+        if(i -&gt; weight &gt; 0 &amp;&amp; l[v] &lt; l[i -&gt; to]){
+            Weight d = blockingFlow(g, l, i -&gt; to, t, min(f, i -&gt; weight));
+            if(d &gt; 0){
+                i -&gt; weight -= d;
+                g[i -&gt; to][i -&gt; rev].weight += d;
+                return d;
+            }
+        }
+    }
+    return 0;
+}
+Weight dinitz(Graph &amp;g, int s, int t){
+    int n = g.size();
+    Weight flow = 0;
+    vector&lt;int&gt; l(n, -1);
+    for(;;){
+        queue&lt;int&gt; Q;
+        fill(ALL(l), -1);
+        l[s] = 0;
+        Q.push(s);
+        while(!Q.empty()){
+            int v = Q.front(); Q.pop();
+            EACH(i, g[v])if(i -&gt; weight &gt; 0 &amp;&amp; l[i -&gt; to] &lt; 0){
+                l[i -&gt; to] = l[v] + 1;
+                Q.push(i -&gt; to);
+            }
+        }
+        if(l[t] &lt; 0) return flow;
+        Weight f;
+        while((f = blockingFlow(g, l, s, t, INF)) &gt; 0) flow += f;
+    }
+}
+
+</pre>
+<h2>確認済み問題</h2>
+<ul>
+    <li>AOJ 2304</li>
+</ul>
+<h2>参考</h2>
+<ul>
+    <li>グラフ・ネットワーク・組合せ論</li>
+</ul>
+   </body>
+</html>

@@ -1,0 +1,81 @@
+<html>
+    <head>
+        <link href="prettify.css" type="text/css" rel="stylesheet" />
+        <link href="style.css" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="prettify.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>関節点，二連結成分分解</title>
+    </head>
+    <body onLoad="prettyPrint()">
+<h1>関節点，二連結成分分解</h1>
+<h2>説明</h2>
+<p>
+連結なグラフG=(V,E)において頂点v \in Vを削除した誘導部分グラフG[V-{v}]が非連結になるとき，vをGの関節点と呼ぶ．また，任意の頂点を削除しても連結性が保たれる部分グラフを二連結成分と呼ぶ．
+</p>
+<p>
+グラフの関節点を見つけるには，深さ優先探索を行えばいい．グラフの任意の点について深さ優先探索を行った時の探索木を考えると，関節点について次の性質がわかる
+</p>
+<ul>
+    <li>探索木の根の頂点が関節点である iff 探索木の根の子が2つ以上</li>
+    <li>探索木の葉は関節点ではない</li>
+    <li>上記2つを除く頂点vが関節点である iff 次の条件を満たすような探索木におけるvの子wが存在する．wを根とする部分木において，vより上に昇る辺を持つ頂点が存在しない．</li>
+</ul>
+<h2>計算量</h2>
+<p>
+O(|V|+|E|)
+</p>
+<h2>使用方法</h2>
+<p>
+getArticulationを呼び出す．
+</p>
+<dl>
+    <dt>const Graph &amp;g</dt><dd>関節点を探すグラフ</dd>
+    <dt>vector&lt;int&gt; &amp;artc</dt><dd>関節点を格納するベクタ</dd>
+    <dt>vector&lt;&lt;int&gt; &gt; &amp;comp</dt><dd>二連結成分を格納するベクタ</dd>
+</dl>
+<h2>ソースコード</h2>
+<pre class="prettyprint">void artcRecur(const Graph &amp;g, int v, int u, vector&lt;int&gt; &amp;artc,
+               vector&lt;vector&lt;int&gt; &gt; &amp;comp, vector&lt;int&gt; &amp;low,
+               vector&lt;bool&gt; &amp;open, stack&lt;int&gt; &amp;S, int &amp;cnt){
+    bool isArtc = false;
+    int d, c = 0;
+    low[v] = d = ++cnt;
+    S.push(v);
+    EACH(i, g[v]) if(i-&gt;to != u){
+        if(low[i-&gt;to] == 0){
+            artcRecur(g, i-&gt;to, v, artc, comp, low, open, S, cnt);
+            ++c;
+            if(low[i-&gt;to] &gt;= low[v]){
+                isArtc = true;
+                comp.push_back(vector&lt;int&gt;());
+                while(S.top() != v){
+                    comp.back().push_back(S.top()); S.pop();
+                }
+                comp.back().push_back(v);
+            }
+        }
+        d = min(d, low[i-&gt;to]);
+    }
+    low[v] = d;
+    if(u &gt;= 0 &amp;&amp; isArtc || u &lt; 0 &amp;&amp; c &gt; 1) artc.push_back(v);
+    if(u &lt; 0) S.pop();
+}
+void getArticulation(const Graph &amp;g, vector&lt;int&gt; &amp;artc,
+                     vector&lt;vector&lt;int&gt; &gt; &amp;comp){
+    int n = g.size();
+    vector&lt;int&gt; low(n);
+    vector&lt;bool&gt; open(n);
+    stack&lt;int&gt; S;
+    int cnt = 0;
+    for(int i = 0; i &lt; n; ++i) if(low[i] == 0){
+        artcRecur(g, i, -1, artc, comp, low, open, S, cnt);
+    }
+}
+</pre>
+<h2>確認済み問題</h2>
+<ul>
+    <li>AOJ Courses Library Graph Connected Components Problem A</li>
+</ul>
+<h2>参考</h2>
+   </body>
+</html>

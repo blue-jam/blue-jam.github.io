@@ -1,0 +1,56 @@
+<html>
+    <head>
+        <link href="prettify.css" type="text/css" rel="stylesheet" />
+        <link href="style.css" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="prettify.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>トポロジカルソート</title>
+    </head>
+    <body onLoad="prettyPrint()">
+<h1>トポロジカルソート</h1>
+<h2>説明</h2>
+<p>
+有向グラフgについて，頂点集合Vに対して順序を付け，v[i](0&lt;=i&lt;|V|)と並べたとする．v[i]からv[j]に向かう枝が存在するならば，i&lt;jが成り立つ時，この順序付けをトポロジカル順序と呼ぶ．
+</p>
+<p>
+トポロジカル順序を求めることをトポロジカルソートと呼び，DFSの帰りがけの順に頂点に番号を振っていくことでその逆順が求められる．
+</p>
+<h2>計算量</h2>
+<ul>
+    <li>O(|V|+|E|)</li>
+</ul>
+<h2>使用方法</h2>
+<dl>
+    <dt>戻り値</dt><dd>トポロジカル順序が存在するか</dd>
+    <dt>const Graph &amp; g</dt><dd>トポロジカルソートを行うグラフ</dd>
+    <dt>vector&lt;int&gt; &amp;order</dt><dd>トポロジカル順序が格納されるベクタ</dd>
+</dl>
+<h2>ソースコード</h2>
+<pre class="prettyprint">bool topologicalRecur(const Graph &amp;g, int v, vector&lt;int&gt; &amp;order,
+                      vector&lt;int&gt; &amp;color){
+    color[v] = 1;
+    EACH(i, g[v]){
+        if(color[i-&gt;to] == 1) return false;
+        if(color[i-&gt;to] == 2) continue;
+        topologicalRecur(g, i-&gt;to, order, color);
+    }
+    order.push_back(v); color[v] = 2;
+    return true;
+}
+bool topologicalSort(const Graph &amp;g, vector&lt;int&gt; &amp;order){
+    int n = g.size();
+    vector&lt;int&gt; color(n);
+    bool res = true;
+    for(int i = 0; i &lt; n; ++i) if(color[i] == 0)
+        res = res &amp;&amp; topologicalRecur(g, i, order, color);
+    reverse(ALL(order));
+    return res;
+}
+</pre>
+<h2>確認済み問題</h2>
+<ul>
+    <li>AOJ 2222(Alien's Counting)</li>
+</ul>
+<h2>参考</h2>
+   </body>
+</html>

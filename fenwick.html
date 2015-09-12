@@ -1,0 +1,64 @@
+<html>
+    <head>
+        <link href="prettify.css" type="text/css" rel="stylesheet" />
+        <link href="style.css" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="prettify.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>Binary Indexed Tree(Fenwick Tree)</title>
+    </head>
+    <body onLoad="prettyPrint()">
+<h1>Binary Indexed Tree(Fenwick Tree)</h1>
+<h2>説明</h2>
+<p>
+Segment Treeが任意の範囲に対する操作ができるのに対して，BITは始点からある点までの範囲に対する操作しか行えない．反面，Segment Treeよりはるかに実装コストが低い．
+</p>
+<h2>計算量</h2>
+<ul>
+    <li>更新：O(log N)</li>
+    <li>削除：O(log N)</li>
+</ul>
+<h2>使用方法</h2>
+<p>
+単純に実装した場合は始点が1になるが，工夫をして始点を0にずらしている．始点を1にしたい場合はupdate，getにある先頭の++iを消す．
+</p>
+<dl>
+    <dt>void update(int i, Type v)</dt><dd>位置iの値をvに更新する</dd>
+    <dt>Type get(int i)</dt><dd>始点から位置iまでの値を取得する</dd>
+</dl>
+<h2>ソースコード</h2>
+<pre class="prettyprint">struct Fenwick{
+    vector&lt;Type&gt; bit;
+    Fenwick(int n){
+        bit = vector&lt;Type&gt;(n + 1);
+    }
+    void update(int i, Type v){
+        int n = bit.size();
+        ++i;
+        while(i &lt;= n){
+            bit[i] += v;
+            bit[i] %= P;
+            i += i &amp; -i;
+        }
+    }
+    Type get(int i){
+        Type res = 0;
+        ++i;
+        while(i &gt; 0){
+            res += bit[i];
+            res %= P;
+            i -= i &amp; -i;
+        }
+        return res;
+    }
+};
+</pre>
+<h2>確認済み問題</h2>
+<ul>
+    <li>AOJ 2326(Number Sorting)</li>
+</ul>
+<h2>参考</h2>
+<ul>
+    <li>プログラミングコンテストチャレンジブック</li>
+</ul>
+   </body>
+</html>

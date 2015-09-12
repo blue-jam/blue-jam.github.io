@@ -23,8 +23,11 @@ typedef int Weight;
 struct Edge{
     int from, to;
     Weight weight;
+    int rev;     // ネットワークフロー時の逆辺
     Edge(int from, int to, Weight weight) :
         from(from), to(to), weight(weight) { }
+    Edge(int from, int to, Weight weight, int rev) :
+        from(from), to(to), weight(weight), rev(rev){ }
 };
 bool operator &lt; (const Edge &amp;a, const Edge &amp;b){
     if(a.weight != b.weight) return a.weight &gt; b.weight;
@@ -36,6 +39,15 @@ typedef vector&lt;Edges&gt; Graph;
 
 typedef vector&lt;Weight&gt; Array;
 typedef vector&lt;Array&gt; Matrix;
+
+void addFlowEdge(Graph &amp;g, int a, int b, Weight c){
+    g[a].push_back(Edge(a, b, c, g[b].size()));
+    g[b].push_back(Edge(b, a, 0, g[a].size() - 1));
+}
+void addUndirectedEdge(Graph &amp;g, int a, int b, Weight c){
+    g[a].push_back(Edge(a, b, c, g[b].size()));
+    g[b].push_back(Edge(b, a, c, g[a].size() - 1));
+}
 </pre>
 <p>
 Edgeのless演算子のオーバーロードで，大きいほうが左辺のときにtrueを返すようにしている．これはpriority_queueで，weightの小さいほうを先に取り出すときの工夫である．

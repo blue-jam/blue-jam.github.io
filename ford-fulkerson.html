@@ -1,0 +1,61 @@
+<html>
+    <head>
+        <link href="prettify.css" type="text/css" rel="stylesheet" />
+        <link href="style.css" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="prettify.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>最大流(Ford-Fulkerson)</title>
+    </head>
+    <body onLoad="prettyPrint()">
+<h1>最大流(Ford-Fulkerson)</h1>
+<h2>説明</h2>
+<p>
+最大フローを求めるアルゴリズム.ネットワークが大きい場合はほかのアルゴリズムを使用すること.
+</p>
+<h2>計算量</h2>
+<ul>
+    <li>O(V E C)</li>
+</ul>
+<p>ただし，Cは最大流量</p>
+<h2>使用方法</h2>
+<p>事前に逆辺をweight=0で追加しておく．また，グラフは書き換えを行うので必要な場合はコピーを取っておくこと．</p>
+<h2>ソースコード</h2>
+<pre class="prettyprint">
+Weight ford_dfs(Graph &amp;g, int v, int t, Weight f, vector&lt;int&gt; &amp;used){
+    if(v == t) return f;
+    used[v] = true;
+    EACH(i, g[v]){
+        if(!used[i -&gt; to] &amp;&amp; i -&gt; weight &gt; 0){
+            Weight d = ford_dfs(g, i -&gt; to, t, min(f, i -&gt; weight), used);
+            if(d &gt; 0){
+                i -&gt; weight -= d;
+                g[i -&gt; to][i -&gt; rev].weight += d;
+                return d;
+            }
+        }
+    }
+    return 0;
+}
+Weight ford_fulkerson(Graph &amp;g, int s, int t){
+    vector&lt;int&gt; used(g.size());
+    Weight flow = 0;
+    for(;;){
+        fill(ALL(used), 0);
+        int f = ford_dfs(g, s, t, INF, used);
+        if(f == 0) return flow;
+        flow += f;
+    }
+    return flow;
+}
+</pre>
+<h2>確認済み問題</h2>
+<ul>
+    <li>AOJ 2304</li>
+</ul>
+<h2>参考</h2>
+<ul>
+    <li>グラフ・ネットワーク・組み合わせ論</li>
+    <li>蟻本</li>
+</ul>
+   </body>
+</html>

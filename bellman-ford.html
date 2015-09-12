@@ -67,7 +67,7 @@ bool findNegativeRoop(const Graph &amp;g){
             //for(Edges::const_iterator i=g[v].begin(); i != g[v].end(); ++i){
                 if(dist[i -&gt; to] &gt; dist[i -&gt; from] + i -&gt; weight){
                     dist[i -&gt; to] = dist[i -&gt; from] + i -&gt; weight;
-                    if(v == n - 1) return true;
+                    if(k == n - 1) return true;
                 }
             }
         }

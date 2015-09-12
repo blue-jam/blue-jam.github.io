@@ -1,0 +1,74 @@
+<html>
+    <head>
+        <link href="prettify.css" type="text/css" rel="stylesheet" />
+        <link href="style.css" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="prettify.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>橋，二辺連結成分分解</title>
+    </head>
+    <body onLoad="prettyPrint()">
+<h1>橋，二辺連結成分分解</h1>
+<h2>説明</h2>
+<p>
+グラフG=(V,E)において，辺e \in Eを除いたグラフG'=(V,E-{e})が連結でないとき，eをGの橋と呼ぶ．また，任意の辺を1つ削除しても連結性が保たれるGの極大な部分グラフを二辺連結成分と呼ぶ．
+</p>
+<p>
+二辺連結成分であるかどうかを調べるには，連結成分1つにつき深さ優先探索を1回行えばよい．強連結成分分解のコードを少し変えると二辺連結成分分解のコードになる．詳しい説明は文献を参照．
+</p>
+<h2>計算量</h2>
+<p>
+深さ優先探索を1回行うだけなのでO(|V|+|E|)
+</p>
+<h2>使用方法</h2>
+<dl>
+    <dt>const Graph &amp;g</dt><dd>対象となるグラフ</dd>
+    <dt>Edges &amp;bridge</dt><dd>橋が格納されるベクタ(空推奨)</dd>
+    <dt>vector&lt;vector&lt;int&gt; &gt; &amp;comp</dt><dd>二辺連結成分が格納されるベクタ(空推奨)</dd>
+</dl>
+<h2>ソースコード</h2>
+<pre class="prettyprint">void bridgeRecur(const Graph &amp;g, int v, int u,
+                 Edges &amp;bridge, vector&lt;vector&lt;int&gt; &gt; &amp;comp,
+                 vector&lt;int&gt; &amp;num, vector&lt;bool&gt; &amp;open,
+                 stack&lt;int&gt; &amp;oNodes, stack&lt;int&gt; &amp;oReps, int &amp;cnt){
+    if(num[v] != 0){
+        if(open[v]) while(num[oReps.top()] &gt; num[v]) oReps.pop();
+        return;
+    }
+    num[v] = ++cnt;
+    oReps.push(v); oNodes.push(v); open[v] = true;
+    EACH(i, g[v]) if(i-&gt;to != u)
+        bridgeRecur(g, i-&gt;to, i-&gt;from, bridge, comp, num, open, oNodes, oReps, cnt);
+    if(v == oReps.top()){
+        int w;
+        oReps.pop();
+        comp.push_back(vector&lt;int&gt;());
+        do{
+            w = oNodes.top(); oNodes.pop();
+            open[w] = false;
+            comp.back().push_back(w);
+        }while(v != w);
+        bridge.push_back(Edge(min(u, v), max(u,v), 0));
+    }
+}
+void getBridge(const Graph &amp;g, Edges &amp;bridge, vector&lt;vector&lt;int&gt; &gt; &amp;comp){
+    int n = g.size();
+    vector&lt;int&gt; num(n);
+    vector&lt;bool&gt; open(n);
+    stack&lt;int&gt; oReps, oNodes;
+    int cnt = 0;
+    for(int i = 0; i &lt; n; ++i) if(num[i] == 0){
+        bridgeRecur(g, i, n, bridge, comp, num, open, oNodes, oReps, cnt);
+        bridge.pop_back();
+    }
+}
+</pre>
+<h2>確認済み問題</h2>
+<ul>
+    <li>AOJ Courses Library Graph Connected Components Problem B</li>
+</ul>
+<h2>参考</h2>
+<ul>
+    <li>アルゴリズムとデータ構造-基礎のツールボックス-</li>
+</ul>
+   </body>
+</html>

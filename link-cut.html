@@ -1,0 +1,191 @@
+<html>
+    <head>
+        <link href="prettify.css" type="text/css" rel="stylesheet" />
+        <link href="style.css" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="prettify.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>Link-Cut Tree</title>
+    </head>
+    <body onLoad="prettyPrint()">
+<h1>Link-Cut Tree</h1>
+<h2>説明</h2>
+<p>
+Link-Cut Treeは木を管理する木構造である．管理対象の木をパスに分解し，パスはSplay木で表す．
+</p>
+<h2>計算量</h2>
+<ul>
+    <li>各操作がO(log N)で行える</li>
+</ul>
+<h2>使用方法</h2>
+<p>
+必要に応じて機能を追加する．最低限必要なのはSplay操作とevert．
+</p>
+<p>
+頂点の重みを管理する必要がない場合はdcostやdminを扱っているところを全部消してよい．
+</p>
+<dl>
+    <dt>void link(int c, int v)</dt><dd>cを根とする木をvに接続する</dd>
+    <dt>void cut(int c)</dt><dd>木をcから親に向かう辺を削除することで2つの木に分ける</dd>
+    <dt>void find_root(int v)</dt><dd>頂点vが属する木の根を見つける</dd>
+    <dt>pair&lt;int, int&gt; find_cost(int v)</dt><dd>vから根に向かうパスの中で最小の重みと，その重みをもつ頂点のうち最も根に近い頂点の組を返す</dd>
+    <dt>void addcost(int v, int x)</dt><dd>vから根に向かうパスの中にある頂点の重みにxを加える</dd>
+    <dt>void evert(int v)</dt><dd>頂点vを根にする</dd>
+</dl>
+<h2>ソースコード</h2>
+<pre class="prettyprint">struct LinkCutTree{
+    static const int L = 0, R = 1;
+    struct node{
+        node *pp, *cp[2];//*lp, *rp;
+        bool rev;
+        int dcost, dmin;
+        int id;
+        node(){
+            id = -1;
+            pp = cp[L] = cp[R] = NULL;
+            rev = false;
+            dcost = dmin = 0;
+        }
+        // Splay木の根であるか
+        bool isRoot(){
+            return !pp || pp-&gt;cp[L] != this &amp;&amp; pp-&gt;cp[R] != this;
+        }
+        // ノードの状態（反転など）を子に伝搬させる
+        void push(){
+            if(rev){
+                swap(cp[L], cp[R]);
+                if(cp[L]) cp[L]-&gt;rev ^= true;
+                if(cp[R]) cp[R]-&gt;rev ^= true;
+                rev = false;
+            }
+        }
+        // dがRなら右回転，dがLなら左回転を行う
+        void rot(int d){
+            node *q = pp, *r = q-&gt;pp;
+            int e = 1 - d;
+            if(q-&gt;cp[e] = cp[d]) cp[d]-&gt;pp = q;
+            cp[d] = q; q-&gt;pp = this;
+
+            int qd = q-&gt;dmin;
+            q-&gt;dmin = q-&gt;dcost;
+            if(q-&gt;cp[e]) q-&gt;dmin = min(q-&gt;dmin, dmin + q-&gt;cp[e]-&gt;dmin);
+            if(q-&gt;cp[d]) q-&gt;dmin = min(q-&gt;dmin, q-&gt;cp[d]-&gt;dmin);
+            q-&gt;dcost -= q-&gt;dmin;
+            if(q-&gt;cp[e]) q-&gt;cp[e]-&gt;dmin += dmin - q-&gt;dmin;
+            if(q-&gt;cp[d]) q-&gt;cp[d]-&gt;dmin -= q-&gt;dmin;
+            if(cp[e]) cp[e]-&gt;dmin += dmin;
+            dcost += dmin;
+            dmin = qd;
+            
+            if(pp=r){
+                if(r-&gt;cp[L] == q) r-&gt;cp[L] = this;
+                if(r-&gt;cp[R] == q) r-&gt;cp[R] = this;
+            }
+        }
+        // Splay操作
+        void splay(){
+            push();
+            while(!isRoot()){
+                node *q = pp;
+                if(q-&gt;isRoot()){
+                    q-&gt;push(); push();
+                    if(q-&gt;cp[L] == this) rot(R);
+                    else rot(L);
+                }
+                else{
+                    node *r = q-&gt;pp;
+                    r-&gt;push(); q-&gt;push(); push();
+                    for(int i = 0; i &lt; 2; ++i) if(r-&gt;cp[i] == q){
+                        if(q-&gt;cp[i] == this){ q-&gt;rot(1-i); rot(1-i); }
+                        else{ rot(i); rot(1-i); }
+                        break;
+                    }
+                }
+            }
+        }
+    };
+    vector&lt;node&gt; nodes;
+    LinkCutTree(int n) : nodes(n) {
+        for(int i = 0; i &lt; n; ++i) nodes[i].id = i;
+    }
+    node *expose(node *x){
+        node *rp = NULL;
+        for(node *p = x; p != NULL; p = p-&gt;pp){
+            int ndmin;
+            p-&gt;splay();
+
+            if(p-&gt;cp[R]) p-&gt;cp[R]-&gt;dmin += p-&gt;dmin;
+            ndmin = p-&gt;dmin + p-&gt;dcost;
+            if(rp) ndmin = min(ndmin, rp-&gt;dmin);
+            if(p-&gt;cp[L]) ndmin = min(ndmin, p-&gt;dmin + p-&gt;cp[L]-&gt;dmin);
+            if(rp) rp-&gt;dmin = rp-&gt;dmin - ndmin;
+            if(p-&gt;cp[L]) p-&gt;cp[L]-&gt;dmin += p-&gt;dmin - ndmin;
+            p-&gt;dcost += p-&gt;dmin - ndmin;
+            p-&gt;dmin = ndmin;
+
+            p-&gt;cp[R] = rp;
+            rp = p;
+        }
+        x-&gt;splay();
+        return x;
+    }
+    void link(int v, int w){
+        node *c = &amp;nodes[v], *p = &amp;nodes[w];
+        expose(c);
+        expose(p);
+        c-&gt;pp = p;
+        p-&gt;cp[R] = c;
+
+        p-&gt;dcost += p-&gt;dmin - min(p-&gt;dmin, c-&gt;dmin);
+        if(p-&gt;cp[L]) p-&gt;cp[L]-&gt;dmin += p-&gt;dmin - min(p-&gt;dmin, c-&gt;dmin);
+        p-&gt;dmin = min(p-&gt;dmin, c-&gt;dmin);
+        c-&gt;dmin = c-&gt;dmin - p-&gt;dmin;
+    }
+    void cut(int v){
+        node *c = &amp;nodes[v];
+        expose(c);
+        node *p = c -&gt; cp[L];
+        c-&gt;cp[L] = NULL;
+        p-&gt;pp = NULL;
+
+        p-&gt;dmin += c-&gt;dmin;
+        c-&gt;dmin += c-&gt;dcost;
+        c-&gt;dcost = 0;
+    }
+    int findroot(int n){
+        node *v = expose(&amp;nodes[n]);
+        while(v-&gt;cp[L]) v-&gt;push(), v = v-&gt;cp[L];
+        v-&gt;splay();
+        return v-&gt;id;
+    }
+    pair&lt;int, int&gt; findcost(int n){
+        node *v = expose(&amp;nodes[n]);
+        for(;;){
+            v-&gt;push();
+            if(v-&gt;cp[L] &amp;&amp; v-&gt;cp[L]-&gt;dmin == 0) v = v-&gt;cp[L];
+            else if((!v-&gt;cp[L] || v-&gt;cp[L]-&gt;dmin &gt; 0) &amp;&amp; v-&gt;dcost &gt; 0) v = v-&gt;cp[R];
+            else break;
+        }
+        v-&gt;splay();
+        return make_pair(v-&gt;dmin, v-&gt;id);
+    }
+    void addcost(int n, int x){
+        node *v = expose(&amp;nodes[n]);
+        v-&gt;dmin += x;
+    }
+    void evert(int v){
+        node *r = expose(&amp;nodes[v]);
+        r-&gt;rev ^= true;
+    }
+};
+</pre>
+<h2>確認済み問題</h2>
+<ul>
+    <li>JOI2013年春合宿4日目 SpaceShips(link,cut,findrootのみ)</li>
+</ul>
+<h2>参考</h2>
+<ul>
+    <li>iwiwi先生のスライド</li>
+    <li>Data Structures and Network Algorithms</li>
+</ul>
+   </body>
+</html>

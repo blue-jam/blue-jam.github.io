@@ -14,10 +14,10 @@
 </p>
 <h2>計算量</h2>
 <ul>
-    <li>併合，検索: O(1/A(n, n))(ならし計算量)</li>
+    <li>併合，検索: O(α(n))(ならし計算量)</li>
 </ul>
 <p>
-*nは全要素数，A(n,n)はアッカーマン関数．
+*nは全要素数，α(n)はアッカーマン関数A(n,n)=A(n)とした時の逆関数．
 </p>
 <h2>使用方法</h2>
 <p>
@@ -42,9 +42,9 @@ struct UnionFind{
         y = find(y);
         if(x == y) return false;
         if(rank[x] &lt; rank[y])
-            parent[y] = x;
-        else
             parent[x] = y;
+        else
+            parent[y] = x;
         if(rank[x] == rank[y])
             ++rank[x];
         return true;

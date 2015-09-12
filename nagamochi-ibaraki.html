@@ -1,0 +1,82 @@
+<html>
+    <head>
+        <link href="prettify.css" type="text/css" rel="stylesheet" />
+        <link href="style.css" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="prettify.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>無向グラフの最小カット(永持-茨木のアルゴリズム)</title>
+    </head>
+    <body onLoad="prettyPrint()">
+<h1>無向グラフの最小カット(永持-茨木のアルゴリズム)</h1>
+<h2>説明</h2>
+<p>
+無効グラフの最少カットを求めるアルゴリズム．
+</p>
+<h2>計算量</h2>
+<ul>
+    <li>O(V^2 + VE log V)</li>
+</ul>
+<h2>使用方法</h2>
+<p>
+グラフは無向グラフとして作っておく．無効グラフと，最小カット集合を格納するvectorを渡す．Union-Find木を使用している．
+</p>
+<dl>
+    <dt>const Graph &amp;g1</dt>
+    <dd>無向グラフ</dd>
+    <dt>vector&lt;int&gt; &amp;v</dt>
+    <dd>最小カット集合</dd>
+</dl>
+<h2>ソースコード</h2>
+<pre class="prettyprint">
+Weight mincut(const Graph &amp;g1, vector&lt;int&gt; &amp;w){
+    int n = g1.size();
+    int cut = INF;
+    UnionFind uf(n);
+    priority_queue&lt;Edge&gt; Q;
+    vector&lt;int&gt; used;
+    vector&lt;Weight&gt; d;
+    Graph g = g1;
+    w.clear();
+    for(int k = 0; k &lt; n - 1; ++k){
+        int s = uf.find(0), t = -1;
+        Q.push(Edge(s, s, 0));
+        d.assign(n, 0);
+        used.assign(n, 0);
+        while(!Q.empty()){
+            Edge e = Q.top(); Q.pop();
+            int v = uf.find(e.to);
+            if(used[v]) continue;
+            used[v] = true;
+            s = uf.find(e.from);
+            t = v;
+            EACH(i, g[e.to]){
+                int u = uf.find(i -&gt; to);
+                if(!used[u]){
+                    d[u] -= i -&gt; weight;
+                    Q.push(Edge(v, u, d[u]));
+                }
+            }
+        }
+        if(cut &gt; -d[t]){
+            cut = -d[t];
+            w.clear();
+            for(int i = 0; i &lt; n; ++i)
+                if(uf.same(t, i)) w.push_back(i);
+        }
+        uf.unite(s, t);
+        if(uf.find(s) != s) swap(s, t);
+        g[s].insert(g[s].end(), ALL(g[t]));
+    }
+    return cut;
+}
+</pre>
+<h2>確認済み問題</h2>
+<ul>
+    <li>UVa 10989</li>
+</ul>
+<h2>参考</h2>
+<ul>
+    <li>グラフ・ネットワーク・組合せ論（藤重　悟）</li>
+</ul>
+   </body>
+</html>
