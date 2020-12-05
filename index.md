@@ -1,6 +1,6 @@
 ---
 layout: home
-title: blue-jam
+title: blue_jam
 ---
 
 A Software Engineer in Tokyo
