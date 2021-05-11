@@ -3,8 +3,6 @@ layout: home
 title: blue_jam
 ---
 
-# blue_jam
-
 A Software Engineer in Tokyo
 
 ## Links
