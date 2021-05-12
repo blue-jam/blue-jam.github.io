@@ -13,4 +13,4 @@ A Software Engineer in Tokyo
 
 ## Programs
 
-* [Rainbowshoes](https://rainbowshoes.moe/) ... A web page that collects products related to animes. UI is in Japanese.
+* [Rainbow Shoes](https://rainbowshoes.moe/) ... A web page that collects products related to animes. UI is in Japanese.
