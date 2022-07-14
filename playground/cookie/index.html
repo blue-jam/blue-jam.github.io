@@ -8,7 +8,7 @@
 <script type="text/javascript">
     const isThirdPartyCookieEnabled = () => {
         const frame = document.createElement('iframe');
-        frame.src = 'https://bluejam.github.io/playground/cookie/iframe.html';
+        frame.src = 'https://blue-jam.github.io/playground/cookie/iframe.html';
         frame.setAttribute('sandbox', 'allow-scripts allow-same-origin');
         frame.setAttribute('style', 'display:none');
 
@@ -29,7 +29,7 @@
         };
         window.addEventListener('message', messageHandler);
         frame.onload = () => {
-            frame.contentWindow.postMessage('', '*');
+            frame.contentWindow.postMessage('blue_jam cookie check', '*');
         }
         document.body.appendChild(frame);
     };
