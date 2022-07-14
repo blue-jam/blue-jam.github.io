@@ -1,0 +1,40 @@
+<html lang="en">
+<body>
+<p>
+    <a href="https://medium.com/devscollab/detecting-whether-3rd-party-cookies-are-enabled-or-not-in-javascript-4328715a527b">
+        Reference
+    </a>
+</p>
+<script type="text/javascript">
+    const isThirdPartyCookieEnabled = () => {
+        const frame = document.createElement('iframe');
+        frame.src = 'https://bluejam.github.io/playground/cookie/iframe.html';
+        frame.setAttribute('sandbox', 'allow-scripts allow-same-origin');
+        frame.setAttribute('style', 'display:none');
+
+        const messageHandler = (event) => {
+            console.log('client', event.data);
+            try {
+                const data = JSON.parse(event.data);
+                let value = data['bluejamCookie'];
+                console.log('third party cookie enabled', value)
+                window.removeEventListener('message', messageHandler);
+                document.body.removeChild(frame);
+                const element = document.createElement('h1');
+                element.innerText = `result: ${value}`;
+                document.body.appendChild(element);
+            } catch (e) {
+                console.log(e);
+            }
+        };
+        window.addEventListener('message', messageHandler);
+        frame.onload = () => {
+            frame.contentWindow.postMessage('', '*');
+        }
+        document.body.appendChild(frame);
+    };
+
+    isThirdPartyCookieEnabled();
+</script>
+</body>
+</html>

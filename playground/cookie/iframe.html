@@ -1,0 +1,24 @@
+<html lang="en">
+<body>
+<script type="text/javascript">
+    const checkCookieEnabled = () => {
+        return window.navigator.cookieEnabled;
+    };
+
+    const eventListener = (event) => {
+        console.log('server', event.data);
+        try {
+            if (event.data !== 'blue_jam cookie check') {
+                return;
+            }
+            const result = checkCookieEnabled();
+            parent.postMessage(JSON.stringify({bluejamCookie: result}), event.origin)
+            window.removeEventListener('message', eventListener);
+        } catch (e) {
+            console.error(e);
+        }
+    };
+    window.addEventListener('message', eventListener);
+</script>
+</body>
+</html>
