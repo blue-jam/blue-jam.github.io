@@ -7,7 +7,8 @@ title: blue_jam
 
 ## スキル・経験
 
-- 英語（英語が公用語の企業で働いた経験があります）
+- 英語
+    - 英語が公用語の企業で働いた経験があります
 - Webアプリケーション開発
     - アプリケーションの国際化・ローカライズ（インド・ドイツ・オランダ・日本）の経験があります
 - アルゴリズムの実装や最適化
@@ -40,6 +41,7 @@ title: blue_jam
 
 ## リンク
 
+- [ぶるけんプログラミング道場（YouTube）](https://www.youtube.com/channel/UCHFNxFVfsoVvpLxS8HJ566g/)
 - [X](https://x.com/blue_jam)
 - [mixi2](https://mixi.social/@blue_jam)
 - [GitHub](https://github.com/blue-jam)
