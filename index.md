@@ -4,6 +4,7 @@ title: blue_jam
 ---
 
 首都圏のソフトウェアエンジニア（プログラマー）です。
+フリーランスとして働く傍ら、学ぶこと・つくることの楽しさを発信する活動をしています。
 
 ## スキル・経験
 
@@ -40,6 +41,7 @@ title: blue_jam
 - 2017年4月 - 2018年6月: 株式会社リクルートホールディングス / 株式会社リクルート
     - Indeed Japan株式会社に出向
 - 2018年7月 - 2026年3月: Indeed Japan株式会社 / Indeed Technologies Japan株式会社
+- 2026年-: フリーランス
 
 ## 興味
 
@@ -50,6 +52,7 @@ title: blue_jam
 ## リンク
 
 - [ぶるけんプログラミング道場（YouTube）](https://www.youtube.com/channel/UCHFNxFVfsoVvpLxS8HJ566g/)
+- [note](https://note.com/blue_jam4094)
 - [X](https://x.com/blue_jam)
 - [mixi2](https://mixi.social/@blue_jam)
 - [GitHub](https://github.com/blue-jam)
